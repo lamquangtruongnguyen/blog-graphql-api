@@ -4,6 +4,7 @@ import {
   IsNotEmpty,
   IsEmail,
   IsOptional,
+  IsString,
   MinLength,
   ValidateIf,
 } from 'class-validator';
@@ -13,17 +14,20 @@ export class CreateBlogDTO {
   @Field()
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @IsNotEmpty({ message: 'Empty title input' })
+  @IsString()
   title: string;
 
   @Field()
   @Transform(({ value }: TransformFnParams) => value?.trim())
   @IsNotEmpty({ message: 'Empty description input' })
+  @IsString()
   @MinLength(10, { message: 'Description must have at least 10 characters' })
   description: string;
 
   @Field({ defaultValue: 'Unknown' })
   @IsOptional()
   @Transform(({ value }: TransformFnParams) => value?.trim())
+  @IsString()
   author: string;
 
   @Field({ nullable: true })

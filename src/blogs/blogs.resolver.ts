@@ -4,27 +4,25 @@ import { Blog } from './entities/blog.entity';
 import { CreateBlogDTO } from './dto/createBlog.dto';
 import { UpdateBlogDTO } from './dto/updateBlog.dto';
 import { UsePipes, ValidationPipe } from '@nestjs/common';
+import { GetBlogDto } from './dto/getBlog.dto';
+import { SortDto } from './dto/sort.dto';
 
 @Resolver((of) => Blog)
 @UsePipes(new ValidationPipe({ transform: true }))
 export class BlogsResolver {
   constructor(private readonly blogsService: BlogsService) {}
 
-  @Query((returns) => [Blog])
-  async getAllBlogs(): Promise<Blog[]> {
-    return await this.blogsService.getAllBlogs();
+  @Query((returns) => [Blog], { name: 'blogs' })
+  async getAllBlogs(
+    @Args('getBlogDto', { nullable: true }) getBlogDto?: GetBlogDto,
+    @Args('sortDto', { nullable: true }) sortDto?: SortDto,
+  ): Promise<Blog[]> {
+    return await this.blogsService.getAllBlogs(getBlogDto, sortDto);
   }
 
-  @Query((returns) => Blog)
+  @Query((returns) => Blog, { name: 'blog' })
   async getBlogById(@Args('id', { type: () => ID }) id: string): Promise<Blog> {
     return await this.blogsService.getBlogById(id);
-  }
-
-  @Query((returns) => [Blog])
-  async getBlogByAuthor(
-    @Args('author', { nullable: true }) author: string,
-  ): Promise<Blog[]> {
-    return await this.blogsService.getBlogByAuthor(author);
   }
 
   @Mutation((returns) => Blog)
@@ -35,7 +33,7 @@ export class BlogsResolver {
   @Mutation((returns) => Blog)
   async updateBlog(
     @Args('id', { type: () => ID }) id: string,
-    @Args('updateBlogDto') updateBlogDto: UpdateBlogDTO,
+    @Args('updateBlogDto', { nullable: true }) updateBlogDto?: UpdateBlogDTO,
   ): Promise<Blog> {
     return await this.blogsService.updateBlog(id, updateBlogDto);
   }

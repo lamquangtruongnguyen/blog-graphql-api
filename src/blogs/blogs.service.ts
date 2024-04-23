@@ -1,9 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Blog } from './entities/blog.entity';
-import { Repository } from 'typeorm';
+import { FindOperator, ILike, Repository } from 'typeorm';
 import { CreateBlogDTO } from './dto/createBlog.dto';
 import { UpdateBlogDTO } from './dto/updateBlog.dto';
+import { GetBlogDto } from './dto/getBlog.dto';
+import { SortDto } from './dto/sort.dto';
 
 @Injectable()
 export class BlogsService {
@@ -11,25 +13,37 @@ export class BlogsService {
     @InjectRepository(Blog) private blogsRepository: Repository<Blog>,
   ) {}
 
-  async getAllBlogs(): Promise<Blog[]> {
-    return await this.blogsRepository.find();
+  async getAllBlogs(
+    getBlogDto?: GetBlogDto,
+    sortDto?: SortDto,
+  ): Promise<Blog[]> {
+    const findOptions: {
+      author?: FindOperator<string>;
+      title?: FindOperator<string>;
+      description?: FindOperator<string>;
+    } = {};
+
+    if (getBlogDto.author) {
+      findOptions.author = ILike(`%${getBlogDto.author}%`);
+    }
+    if (getBlogDto.title) findOptions.title = ILike(`%${getBlogDto.title}%`);
+    if (getBlogDto.description)
+      findOptions.description = ILike(`%${getBlogDto.description}%`);
+
+    const blog = await this.blogsRepository.find({
+      where: findOptions,
+      order: { [sortDto.field]: sortDto.orderBy },
+    });
+    if (blog.length === 0) {
+      throw new NotFoundException(`Blog not found`);
+    }
+    return blog;
   }
 
   async getBlogById(id: string): Promise<Blog> {
     const blog = await this.blogsRepository.findOne({ where: { id } });
     if (!blog) {
       throw new NotFoundException(`Post with ID ${id} not found`);
-    }
-    return blog;
-  }
-
-  async getBlogByAuthor(author?: string): Promise<Blog[]> {
-    if (!author || author.trim() === '') author = 'Unknown';
-    const blog = await this.blogsRepository.find({ where: { author } });
-    if (blog.length === 0) {
-      throw new NotFoundException(
-        `Not found any blog whose author is ${author}`,
-      );
     }
     return blog;
   }
@@ -45,7 +59,7 @@ export class BlogsService {
     return await this.blogsRepository.save(blog);
   }
 
-  async updateBlog(id: string, updateBlogDto: UpdateBlogDTO): Promise<Blog> {
+  async updateBlog(id: string, updateBlogDto?: UpdateBlogDTO): Promise<Blog> {
     await this.getBlogById(id);
     if (updateBlogDto.author === '') {
       updateBlogDto.author = 'Unknown';

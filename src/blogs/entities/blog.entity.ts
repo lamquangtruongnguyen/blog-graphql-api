@@ -14,7 +14,7 @@ export class Blog {
   @Field(() => ID)
   id: string;
 
-  @Column()
+  @Column({ type: 'varchar', length: 200 })
   @Field()
   title: string;
 
@@ -22,11 +22,11 @@ export class Blog {
   @Field()
   description: string;
 
-  @Column({ default: 'Unknown' })
+  @Column({ type: 'varchar', length: 100, default: 'Unknown' })
   @Field({ defaultValue: 'Unknown' })
   author: string;
 
-  @Column({ nullable: true })
+  @Column({ type: 'varchar', length: 62, nullable: true })
   @Field({ nullable: true })
   email?: string;
 
