@@ -23,18 +23,18 @@ export class BlogsService {
       description?: FindOperator<string>;
     } = {};
 
-    if (getBlogDto.author) {
+    if (getBlogDto?.author) {
       findOptions.author = ILike(`%${getBlogDto.author}%`);
     }
-    if (getBlogDto.title) findOptions.title = ILike(`%${getBlogDto.title}%`);
-    if (getBlogDto.description)
+    if (getBlogDto?.title) findOptions.title = ILike(`%${getBlogDto.title}%`);
+    if (getBlogDto?.description)
       findOptions.description = ILike(`%${getBlogDto.description}%`);
 
     const blog = await this.blogsRepository.find({
       where: findOptions,
-      order: { [sortDto.field]: sortDto.orderBy },
+      order: { [sortDto?.sortField]: sortDto?.orderBy },
     });
-    if (blog.length === 0) {
+    if (!blog || blog.length === 0) {
       throw new NotFoundException(`Blog not found`);
     }
     return blog;
@@ -64,11 +64,10 @@ export class BlogsService {
     if (updateBlogDto.author === '') {
       updateBlogDto.author = 'Unknown';
     }
-    await this.blogsRepository.save({
+    return await this.blogsRepository.save({
       id,
       ...updateBlogDto,
     });
-    return await this.getBlogById(id);
   }
 
   async removeBlog(id: string): Promise<Blog> {

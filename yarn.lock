@@ -3560,6 +3560,11 @@ jest-config@^29.7.0:
     slash "^3.0.0"
     strip-json-comments "^3.1.1"
 
+jest-create-mock-instance@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/jest-create-mock-instance/-/jest-create-mock-instance-2.0.0.tgz#3f79a4399af615fc2f186dfa3c9fe13b0589370b"
+  integrity sha512-gW3H87m8hF72JMFPMEorF2jnEyV31XpaOYtDqeRNSwFT73+MNZvbUKQfCbdixxOrCCppToSPmi9gGygIzms6Eg==
+
 jest-diff@^29.7.0:
   version "29.7.0"
   resolved "https://registry.yarnpkg.com/jest-diff/-/jest-diff-29.7.0.tgz#017934a66ebb7ecf6f205e84699be10afd70458a"

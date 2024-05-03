@@ -8,15 +8,15 @@ export class SortDto {
   @IsOptional()
   @Transform(({ value }: TransformFnParams) => value?.trim().toLowerCase())
   @Matches(/^(title|description|author)$/, {
-    message: 'The value must be among these: "title", "description", "author"',
+    message: 'Input must be among these: "title", "description", "author"',
   })
-  field: string;
+  sortField: string;
 
   @Field({ defaultValue: 'asc' })
   @IsOptional()
   @Transform(({ value }: TransformFnParams) => value?.trim().toLowerCase())
   @Matches(/^(asc|desc)$/, {
-    message: 'The value must be either "asc" or "desc"',
+    message: 'Input must be either "asc" or "desc"',
   })
   orderBy: string;
 }
